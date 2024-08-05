@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        label {
+            margin: 10px 0;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Inventory Management</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="inventory.html"><i class="fas fa-box-open"></i> Inventory</a></li>
+                    <li><a href="customers.html"><i class="fas fa-users"></i> Customers</a></li>
+                    <li><a href="billing.html"><i class="fas fa-file-invoice-dollar"></i> Billing</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <section id="product-form">
+                <h2>Add New Product</h2>
+                <form id="addProductForm">
+                    <label for="productName">Product Name:</label>
+                    <input type="text" id="productName" required>
+
+                    <label for="productPrice">Product Price:</label>
+                    <input type="number" id="productPrice" step="0.01" required>
+
+                    <label for="productStock">Stock Quantity:</label>
+                    <input type="number" id="productStock" required>
+
+                    <button type="submit">Add Product</button>
+                </form>
+            </section>
+
+            <section id="product-list">
+                <h2>Product List</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody">
+                        <!-- Product rows will be dynamically added here -->
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+    <script>
+        // Assuming you have an existing products array (initialized from local storage)
+let products = JSON.parse(localStorage.getItem('products')) || [];
+
+// Function to add a new product
+function addProduct() {
+    const productName = document.getElementById('productName').value;
+    const productPrice = parseFloat(document.getElementById('productPrice').value);
+    const productStock = parseInt(document.getElementById('productStock').value);
+
+    const newProduct = { name: productName, price: productPrice, stock: productStock };
+    products.push(newProduct);
+
+    // Save to local storage
+    localStorage.setItem('products', JSON.stringify(products));
+
+    // Update the product list table
+    updateProductsTable();
+
+    // Clear the form
+    document.getElementById('addProductForm').reset();
+}
+
+// Function to update the product list table
+function updateProductsTable() {
+    const productTableBody = document.getElementById('productTableBody');
+    productTableBody.innerHTML = '';
+
+    products.forEach(product => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${product.name}</td>
+            <td>${product.price.toFixed(2)}</td>
+            <td>${product.stock}</td>
+            <td>
+                <button onclick="deleteProduct('${product.name}')">Delete</button>
+            </td>
+        `;
+        productTableBody.appendChild(row);
+    });
+}
+
+// Function to delete a product
+function deleteProduct(productName) {
+    products = products.filter(product => product.name !== productName);
+    localStorage.setItem('products', JSON.stringify(products));
+    updateProductsTable();
+}
+
+// Initial data load
+updateProductsTable();
+
+    </script>
+</body>
+</html>
